@@ -1,32 +1,50 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cálculo de Clearance de Creatinina</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
+        /* Estilos Gerais e da Malha Sináptica (Tema Escuro Padrão) */
+        html, body {
+            height: 100%;
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #000; /* Fundo escuro */
-            color: #fff; /* Cor padrão do texto */
-            overflow: hidden;
-            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            background: #0a0a23; /* Cor de fundo inicial */
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            transition: background-color 0.3s ease, color 0.3s ease; /* Transição suave para a mudança de tema */
         }
 
-        #background-canvas {
-            position: absolute;
+        #synapseCanvas {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 0; /* Fica atrás do conteúdo */
             display: block;
+            z-index: 0;
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 60px;
+            box-sizing: border-box;
+        }
+
+        .content {
+             flex: 1;
+             display: flex;
+             justify-content: center;
+             align-items: center;
+             padding: 20px;
+             box-sizing: border-box;
         }
 
         .container {
@@ -42,15 +60,18 @@
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
             border: none;
+            margin-top: 40px;
+            margin-bottom: 40px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease;
         }
 
-         .content-area {
-             background-color: rgba(255, 255, 255, 0.08); /* Fundo sutil transparente */
-             padding: 20px; /* Padding interno */
-             border-radius: 8px;
-             box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.1); /* Sombra interna sutil */
+        .content-area {
+            background-color: rgba(255, 255, 255, 0.08);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.1);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
         }
-
 
         h1 {
             font-size: 24px;
@@ -58,10 +79,15 @@
             color: #fff;
             text-shadow: 0 0 10px rgba(0, 102, 153, 0.8);
             font-weight: normal;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        h2 {
+             transition: color 0.3s ease;
         }
 
         .instructions {
-            background-color: rgba(255, 255, 255, 0.05); /* Fundo mais transparente ainda */
+            background-color: rgba(255, 255, 255, 0.05);
             padding: 15px;
             border-radius: 5px;
             margin-bottom: 20px;
@@ -70,6 +96,7 @@
             line-height: 1.5;
             color: rgba(255, 255, 255, 0.8);
             border: none;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .instructions h2 {
@@ -77,11 +104,13 @@
             margin-top: 0;
             margin-bottom: 8px;
             color: rgba(255, 255, 255, 0.9);
+             transition: color 0.3s ease;
         }
 
         .instructions p {
             margin-bottom: 4px;
             color: rgba(255, 255, 255, 0.7);
+            transition: color 0.3s ease;
         }
 
         .form-group {
@@ -95,6 +124,7 @@
             font-weight: bold;
             color: rgba(255, 255, 255, 0.9);
             font-size: 14px;
+            transition: color 0.3s ease;
         }
 
         input[type="text"],
@@ -111,21 +141,25 @@
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Borda sutil */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+             transition: background-color 0.3s ease, color 0.3s ease, border-bottom-color 0.3s ease;
         }
 
-         .sex-select select {
-             background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20256%20448%22%20enable-background%3D%22new%200%200%20256%20448%22%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E.arrow%7Bfill%3A%23fff%3B%7D%3C%2Fstyle%3E%3Cpath%20class%3D%22arrow%22%20d%3D%22M255.7%20159.7l-128%20128.1-127.7-128.1c-1.6-1.6-2.1-3.6-1.6-5.7%20.7-2.1%202.7-3.6%204.8-4.3l.7-3.7c.2-.2.5-.3.7-.5l128-128.1c1.9-1.9%204.1-2.8%206.4-2.8%202.1%200%204.4.9%206.2%202.8l128%20128.1c1.9%201.9%202.8%204.1%202.8%206.4%200%202.3-.9%204.5-2.8%206.4z%22%2F%3E%3C%2Fsvg%3E');
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+             transition: color 0.3s ease;
+        }
+
+        .sex-select select {
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20256%20448%22%20enable-background%3D%22new%200%200%20256%20448%22%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E.arrow%7Bfill%3A%23fff%3B%7D%3C%2Fstyle%3E%3Cpath%20class%3D%22arrow%22%20d%3D%22M255.7%20159.7l-128%20128.1-127.7-128.1c-1.6-1.6-2.1-3.6-1.6-5.7%20.7-2.1%202.7-3.6%204.8-4.3l.7-3.7c.2-.2.5-.3.7-.5l128-128.1c1.9-1.9%204.1-2.8%206.4-2.8%202.1%200%204.4.9%206.2%202.8l128%20128.1c1.9%201.9%202.8%204.1%202.8%206.4%200%202.3-.9%204.5-2.8%206.4z%22%2F%3E%3C%2Fsvg%3E'); /* White arrow */
             background-repeat: no-repeat;
             background-position: right 10px center;
             background-size: 10px auto;
             padding-right: 30px;
-             color: #fff;
-         }
-
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+            color: #fff;
+             transition: background-image 0.3s ease, color 0.3s ease;
         }
+
 
         button {
             display: block;
@@ -153,689 +187,971 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
 
-         .result-box-area {
-             background-color: rgba(255, 255, 255, 0.08);
-             padding: 20px;
-             border-radius: 8px;
-             box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.1);
-             display: none; /* Controlado pelo JS */
-             text-align: left;
-             color: rgba(255, 255, 255, 0.9);
-             margin-top: 20px;
-         }
+        .result-box-area {
+            background-color: rgba(255, 255, 255, 0.08);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.1);
+            display: none; /* Oculto por padrão */
+            text-align: left;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 20px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+        }
 
-         .result-box-area h2 {
-             font-size: 20px;
-             margin-top: 0;
-             margin-bottom: 15px;
-             color: #fff;
-             text-align: center;
-         }
+        .result-box-area h2 {
+            font-size: 20px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #fff;
+            text-align: center;
+            transition: color 0.3s ease;
+        }
 
-         .patient-data p,
-         .calculation-result p {
-             margin-bottom: 8px;
-             font-size: 15px;
-         }
+        .patient-data p,
+        .calculation-result p {
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
 
-         .result-value {
-             font-size: 30px;
-             font-weight: bold;
-             margin-top: 5px;
-         }
+        .result-value {
+            font-size: 30px;
+            font-weight: bold;
+            margin-top: 5px;
+            text-align: center;
+             /* Cores definidas por classes JS result-color-xxx */
+        }
 
-         /* Cores de alerta */
+        /* Classes de cor para o texto do resultado (KDIGO) - As mesmas para ambos os temas */
         .result-color-red { color: #ff4136; }
         .result-color-yellow { color: #ffdc00; }
         .result-color-green { color: #39FF14; }
 
 
-         .graph-area {
-             margin-top: 20px;
-             margin-bottom: 20px;
-             padding-top: 10px;
-             border-top: 1px solid rgba(255, 255, 255, 0.1);
-             text-align: center;
-         }
+        .graph-area {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+             transition: border-top-color 0.3s ease;
+        }
 
-         #comparison-graph-canvas {
-             width: 100%;
-             height: 50px;
-             display: block;
-         }
+        #comparison-graph-canvas {
+            width: 100%;
+            height: 50px;
+            display: block;
+        }
 
-         .graph-labels {
-             display: flex;
-             justify-content: space-between;
-             font-size: 11px;
-             color: rgba(255, 255, 255, 0.7);
-             margin-top: 5px;
-         }
-         .graph-labels span {
-             min-width: 0;
-             text-align: center;
-             flex-grow: 1;
-         }
-         .graph-labels span:first-child { text-align: left; }
-         .graph-labels span:last-child { text-align: right; }
-
-         /* Estilo para a área de Referências */
-         .references-area {
-             margin-top: 20px;
-             padding-top: 15px;
-             border-top: 1px solid rgba(255, 255, 255, 0.1);
-             text-align: left;
-             font-size: 12px;
-             color: rgba(255, 255, 255, 0.7);
-         }
-
-         .references-area h3 {
-             font-size: 14px;
-             margin-top: 0;
-             margin-bottom: 10px;
-             color: rgba(255, 255, 255, 0.9);
-             text-align: center;
-         }
-
-         .references-area ul {
-             padding-left: 20px;
-             margin-bottom: 0;
-         }
-
-         .references-area li {
-             margin-bottom: 8px;
-             line-height: 1.4;
-         }
-
-         .references-area a {
-             color: #66b2ff;
-             text-decoration: none;
+        .graph-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 5px;
              transition: color 0.3s ease;
-         }
+        }
+        .graph-labels span {
+            min-width: 0;
+            text-align: center;
+            flex-grow: 1;
+        }
+        .graph-labels span:first-child { text-align: left; }
+        .graph-labels span:last-child { text-align: right; }
 
-         .references-area a:hover {
-             color: #aaccff;
-             text-decoration: underline;
-         }
+        .references-area {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: left;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            transition: border-top-color 0.3s ease, color 0.3s ease;
+        }
 
+        .references-area h3 {
+            font-size: 14px;
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+             transition: color 0.3s ease;
+        }
 
-         .next-calculation-button {
-             display: block;
-             width: 100%;
-             padding: 10px 20px;
-             margin-top: 20px;
-             border: none;
-             border-radius: 5px;
-             background: rgba(255, 255, 255, 0.15);
-             color: #fff;
-             font-size: 16px;
-             font-weight: bold;
-             cursor: pointer;
-             transition: background-color 0.3s ease;
-         }
+        .references-area ul {
+            padding-left: 20px;
+            margin-bottom: 0;
+        }
 
-         .next-calculation-button:hover {
-             background: rgba(255, 255, 255, 0.25);
-         }
+        .references-area li {
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
 
+        .references-area a {
+            color: #66b2ff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .references-area a:hover {
+            color: #aaccff;
+            text-decoration: underline;
+        }
+
+        .next-calculation-button {
+            display: block;
+            width: 100%;
+            padding: 10px 20px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .next-calculation-button:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
 
         .error-message {
             margin-top: 15px;
             color: #ff6347;
             font-size: 14px;
             text-align: center;
+            transition: color 0.3s ease;
         }
 
-         .general-disclaimer {
+        .general-disclaimer {
             font-size: 11px;
             color: rgba(255, 255, 255, 0.5);
             text-align: center;
             margin-top: 20px;
             padding-top: 15px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
+            transition: border-top-color 0.3s ease, color 0.3s ease;
         }
 
-    body,td,th {
-    font-family: Arial, sans-serif;
-}
+        /* Rodapé clássico */
+        footer {
+            background: rgba(10, 10, 35, 0.9);
+            color: #aaa;
+            text-align: center;
+            padding: 15px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+            position: relative;
+            z-index: 2;
+            margin-top: auto;
+             transition: background-color 0.3s ease, color 0.3s ease, border-top-color 0.3s ease;
+        }
+
+        footer a {
+            color: #66b2ff;
+            text-decoration: none;
+            margin: 0 5px;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: #aaccff;
+            text-decoration: underline;
+        }
+
+        /* --- Tema Claro --- */
+        body.light-mode {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        body.light-mode .container {
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+        }
+
+        body.light-mode .content-area {
+            background-color: rgba(255, 255, 255, 0.8);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-mode h1 {
+            color: #000;
+            text-shadow: none;
+        }
+
+        body.light-mode h2 {
+             color: #555;
+        }
+
+        body.light-mode .instructions {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: rgba(51, 51, 51, 0.9);
+        }
+
+        body.light-mode .instructions h2 {
+            color: rgba(0, 0, 0, 0.8);
+        }
+        body.light-mode .instructions p {
+            color: rgba(0, 0, 0, 0.7);
+        }
+
+
+        body.light-mode .form-group label {
+            color: #333;
+        }
+
+        body.light-mode input[type="text"],
+        body.light-mode input[type="number"],
+        body.light-mode select {
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #000;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+        }
+
+        body.light-mode input::placeholder {
+            color: rgba(0, 0, 0, 0.5);
+        }
+
+        body.light-mode .sex-select select {
+             /* Mudar a cor da seta para o tema claro */
+             background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20256%20448%22%20enable-background%3D%22new%200%200%20256%20448%22%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E.arrow%7Bfill%3A%23333%3B%7D%3C%2Fstyle%3E%3Cpath%20class%3D%22arrow%22%20d%3D%22M255.7%20159.7l-128%20128.1-127.7-128.1c-1.6-1.6-2.1-3.6-1.6-5.7%20.7-2.1%202.7-3.6%204.8-4.3l.7-3.7c.2-.2.5-.3.7-.5l128-128.1c1.9-1.9%204.1-2.8%206.4-2.8%202.1%200%204.4.9%206.2%202.8l128%20128.1c1.9%201.9%202.8%204.1%202.8%206.4%200%202.3-.9%204.5-2.8%206.4z%22%2F%3E%3C%2Fsvg%3E'); /* Dark arrow */
+             color: #000;
+        }
+
+
+        body.light-mode button {
+            background: #0099cc;
+            color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        body.light-mode button:hover {
+            background: #0077a3;
+            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2);
+        }
+        body.light-mode button:active {
+             transform: scale(0.99);
+             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+
+        body.light-mode .result-box-area {
+             background-color: rgba(255, 255, 255, 0.8);
+             color: rgba(0, 0, 0, 0.9);
+             box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-mode .result-box-area h2 {
+            color: #000;
+        }
+
+        body.light-mode .graph-area {
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-mode .graph-labels {
+            color: rgba(0, 0, 0, 0.7);
+        }
+
+        body.light-mode .references-area {
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            color: rgba(0, 0, 0, 0.7);
+        }
+        body.light-mode .references-area h3 {
+            color: rgba(0, 0, 0, 0.8);
+        }
+
+        body.light-mode .references-area a {
+            color: #006699; /* Darker blue link */
+        }
+        body.light-mode .references-area a:hover {
+            color: #004466;
+        }
+
+
+        body.light-mode .next-calculation-button {
+            background: rgba(0, 0, 0, 0.1);
+            color: #000;
+        }
+        body.light-mode .next-calculation-button:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+
+        body.light-mode .error-message {
+            color: #cc0000; /* Darker red error */
+        }
+
+        body.light-mode .general-disclaimer {
+            color: rgba(0, 0, 0, 0.6);
+        }
+
+
+        body.light-mode footer {
+            background: rgba(220, 220, 220, 0.9);
+            color: #555;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-mode footer a {
+            color: #005588; /* Darker footer links */
+        }
+        body.light-mode footer a:hover {
+            color: #003355;
+        }
+
+         /* --- Botão de Tema Modelo iPhone --- */
+         .theme-toggle-container {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 10;
+            /* Padding ou margin se necessário */
+        }
+
+        /* Estilo visual do "Trilho" do toggle */
+        .toggle-label {
+            display: block;
+            width: 40px; /* Largura do trilho */
+            height: 20px; /* Altura do trilho */
+            background-color: #555; /* Cor do trilho (tema escuro, desligado) */
+            border-radius: 10px; /* Bordas arredondadas */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            position: relative;
+            /* Garante que a label não selecione texto ao clicar */
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        /* Estilo visual do "Dedo" ou "Thumb" do toggle */
+        .toggle-label::after {
+            content: '';
+            position: absolute;
+            top: 2px; /* Posição vertical */
+            left: 2px; /* Posição horizontal (desligado) */
+            width: 16px; /* Tamanho do dedo */
+            height: 16px; /* Tamanho do dedo */
+            background-color: #fff; /* Cor do dedo (branco) */
+            border-radius: 50%; /* Redondo */
+            transition: left 0.3s ease; /* Transição suave para o movimento */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.4); /* Sombra sutil */
+        }
+
+        /* Estado quando o checkbox está MARCADO (Tema Claro = LIGADO) */
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #0099cc; /* Cor do trilho (tema claro, ligado) */
+        }
+
+        .toggle-checkbox:checked + .toggle-label::after {
+            left: 22px; /* Posição do dedo (ligado) */
+        }
+
+         /* Opcional: Ajustar a cor do trilho no tema claro quando DESLIGADO se necessário */
+         /*
+         body.light-mode .toggle-label {
+             background-color: #bbb; // Cinza mais claro para o estado desligado no tema claro
+         }
+         */
+
+
     </style>
 </head>
 <body>
+    <!-- Botão de Tema (Modelo iPhone) -->
+    <div class="theme-toggle-container">
+        <input type="checkbox" id="theme-toggle" class="toggle-checkbox" hidden>
+        <label for="theme-toggle" class="toggle-label"></label>
+    </div>
+    <!-- O botão antigo <button id="theme-switcher"> foi removido -->
 
-    <canvas id="background-canvas"></canvas>
 
-    <div class="container">
+    <!-- Malha Sináptica (Canvas de fundo) -->
+    <canvas id="synapseCanvas"></canvas>
 
-         <div id="input-form-area" class="content-area">
-            <h1>Cálculo de Clearance de Creatinina</h1>
+    <div class="main-container">
+        <div class="content">
+            <div class="container">
+                <div id="input-form-area" class="content-area">
+                    <h1>Cálculo de Clearance de Creatinina</h1>
 
-            <div class="instructions">
-                <h2>Fórmula de Cockcroft & Gault</h2>
-                <p><strong>Homem:</strong> [(140 - Idade) x Peso(Kg)] / [Creatinina Sérica (mg/dL) x 72]</p>
-                <p><strong>Mulher:</strong> Resultado acima x 0.85</p>
+                    <div class="instructions">
+                        <h2>Fórmula de Cockcroft & Gault</h2>
+                        <p><strong>Homem:</strong> [(140 - Idade) × Peso (Kg)] / [Creatinina Sérica (mg/dL) × 72]</p>
+                        <p><strong>Mulher:</strong> Resultado acima × 0.85</p>
+                    </div>
+
+                    <div class="form-group sex-select">
+                        <label for="sexo">Sexo:</label>
+                        <select id="sexo">
+                            <option value="masculino">Masculino</option>
+                            <option value="feminino">Feminino</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="idade">Idade (Anos):</label>
+                        <input type="number" id="idade" placeholder="Digite a idade" inputmode="numeric">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="peso">Peso (Kg):</label>
+                        <input type="text" id="peso" placeholder="Digite o peso" inputmode="decimal">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="creatinina">Creatinina Sérica (mg/dL):</label>
+                        <input type="text" id="creatinina" placeholder="Digite a creatinina" inputmode="decimal">
+                    </div>
+
+                    <button id="calcular-btn">Calcular Clearance</button>
+                </div>
+
+                <div id="result-box-area" class="result-box-area">
+                    <h2>Resultado do Cálculo</h2>
+
+                    <div class="error-message" id="result-error-message" style="display: none;"></div>
+
+                    <div class="patient-data">
+                        <p><strong>Sexo:</strong> <span id="display-sexo"></span></p>
+                        <p><strong>Idade:</strong> <span id="display-idade"></span> Anos</p>
+                        <p><strong>Peso:</strong> <span id="display-peso"></span> Kg</p>
+                        <p><strong>Creatinina:</strong> <span id="display-creatinina"></span> mg/dL</p>
+                    </div>
+
+                    <div class="calculation-result">
+                        <p><strong>Clearance de Creatinina:</strong></p>
+                        <div class="result-value" id="display-clearance-result"></div>
+                    </div>
+
+                    <div class="graph-area">
+                        <p>Comparação com Referências (mL/min):</p>
+                        <canvas id="comparison-graph-canvas"></canvas>
+                        <div class="graph-labels">
+                            <span>0</span>
+                            <span>30</span>
+                            <span>60</span>
+                            <span>150</span>
+                        </div>
+                    </div>
+
+                    <div class="references-area">
+                        <h3>Referências para Profissionais</h3>
+                        <ul>
+                            <li><a href="https://kdigo.org/guidelines/" target="_blank" rel="noopener noreferrer">Diretrizes KDIGO (Kidney Disease: Improving Global Outcomes) para Doença Renal Crônica.</a></li>
+                            <!-- Link da ACR corrigido -->
+                            <li><a href="https://www.acr.org/Clinical-Resources/Clinical-Tools-and-Reference/Contrast-Manual" target="_blank" rel="noopener noreferrer">Recomendações do ACR Manual on Contrast Media (American College of Radiology).</a></li>
+                        </ul>
+                        <p style="font-size:10px; text-align:center; margin-top:10px;">Este cálculo é uma estimativa. Consulte as diretrizes mais recentes e a avaliação clínica completa para decisões sobre o uso de contraste.</p>
+                    </div>
+
+                    <button id="next-calculation-btn" class="next-calculation-button">Próximo Cálculo</button>
+                </div>
+
+                <div class="general-disclaimer">
+                    Esta ferramenta fornece um cálculo estimado baseado em uma fórmula comum. A interpretação final e a orientação sobre tratamento <strong>devem sempre ser realizadas por um médico</strong> considerando o quadro clínico completo do paciente.
+                </div>
             </div>
-
-            <div class="form-group sex-select">
-                <label for="sexo">Sexo:</label>
-                <select id="sexo">
-                    <option value="masculino">Masculino</option>
-                    <option value="feminino">Feminino</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="idade">Idade (Anos):</label>
-                <input type="number" id="idade" placeholder="Digite a idade" inputmode="numeric">
-            </div>
-
-            <div class="form-group">
-                <label for="peso">Peso (Kg):</label>
-                <input type="text" id="peso" placeholder="Digite o peso" inputmode="decimal">
-            </div>
-
-            <div class="form-group">
-                <label for="creatinina">Creatinina Sérica (mg/dL):</label>
-                <input type="text" id="creatinina" placeholder="Digite a creatinina" inputmode="decimal">
-            </div>
-
-            <button id="calcular-btn">Calcular Clearance</button>
-
         </div>
 
-         <div id="result-box-area" class="result-box-area">
-             <h2>Resultado do Cálculo</h2>
-
-              <div class="error-message" id="result-error-message" style="display: none;"></div>
-
-             <div class="patient-data">
-                 <p><strong>Sexo:</strong> <span id="display-sexo"></span></p>
-                 <p><strong>Idade:</strong> <span id="display-idade"></span> Anos</p>
-                 <p><strong>Peso:</strong> <span id="display-peso"></span> Kg</p>
-                 <p><strong>Creatinina:</strong> <span id="display-creatinina"></span> mg/dL</p>
-             </div>
-
-             <div class="calculation-result">
-                 <p><strong>Clearance de Creatinina:</strong></p>
-                 <p class="result-value" id="display-clearance-result"></p>
-             </div>
-
-              <div class="graph-area">
-                 <p>Comparação com Referências (mL/min):</p> <canvas id="comparison-graph-canvas"></canvas>
-                  <div class="graph-labels">
-                     <span>0</span>
-                     <span>30</span>
-                     <span>60</span>
-                     <span>150</span> </div>
-             </div>
-
-             <div class="references-area">
-                 <h3>Referências para Profissionais</h3>
-                 <ul>
-                     <li><a href="https://kdigo.org/guidelines/" target="_blank" rel="noopener noreferrer">Diretrizes KDIGO (Kidney Disease: Improving Global Outcomes) para Doença Renal Crônica.</a></li>
-                     <li><a href="https://www.acr.org/Clinical-Resources/Clinical-Tools-and-Reference/Contrast-Manual" target="_blank" rel="noopener noreferrer">Recomendações do ACR Manual on Contrast Media (American College of Radiology).</a></li>
-                 </ul>
-                  <p style="font-size:10px; text-align:center; margin-top:10px;">Este cálculo é uma estimativa. Consulte as diretrizes mais recentes e a avaliação clínica completa para decisões sobre o uso de contraste.</p>
-             </div>
-
-             <button id="next-calculation-btn" class="next-calculation-button">Próximo Cálculo</button>
-         </div>
-
-         <div class="general-disclaimer">
-              Esta ferramenta fornece um cálculo estimado baseado em uma fórmula comum. A interpretação final e a orientação sobre tratamento **devem sempre ser realizadas por um médico** considerando o quadro clínico completo do paciente.
-         </div>
-         <div class="footer-attribution">
-         <p>
-              <span class="attribution-label">Desenvolvido e criado por</span><br>
-              <span class="developer-name">ADRIANO DE OLIVEIRA SILVA - BIOMÉDICO</span>
-         </p>
-         <p class="copyright-notice">Copyright © 2025 Adriano de Oliveira Silva</p>
-    </div>
-
-
+        <!-- Rodapé clássico -->
+        <footer>
+            <!-- Links no rodapé -->
+            <p>© <span id="year"></span> Cálculo de Clearance de Creatinina |
+               <a href="http://linkedin.com/in/adriano-oliveira-171b23148" target="_blank" rel="noopener noreferrer">Contato (LinkedIn)</a> |
+               <a href="http://linkedin.com/in/adriano-oliveira-171b23148" target="_blank" rel="noopener noreferrer">Desenvolvido por Adriano Oliveira</a></p>
+             <!-- A frase "Este cálculo é apenas para fins educacionais..." continua removida -->
+        </footer>
     </div>
 
     <script>
-        // --- Lógica de Cálculo e Atualização da Interface ---
-
-        // Variável para a cor base que o script do canvas usará para tons (RGBA)
-        let baseCanvasColor = { r: 50, g: 80, b: 120, a: 0.2 }; // Tom azul acinzentado sutil
-
-        const inputFormArea = document.getElementById('input-form-area');
-        const resultBoxArea = document.getElementById('result-box-area');
-        const calcularBtn = document.getElementById('calcular-btn');
-        const nextCalculationBtn = document.getElementById('next-calculation-btn');
-
-        const sexoSelect = document.getElementById('sexo');
-        const idadeInput = document.getElementById('idade');
-        const pesoInput = document.getElementById('peso');
-        const creatininaInput = document.getElementById('creatinina');
-
-        const displaySexo = document.getElementById('display-sexo');
-        const displayIdade = document.getElementById('display-idade');
-        const displayPeso = document.getElementById('display-peso');
-        const displayCreatinina = document.getElementById('display-creatinina');
-        const displayClearanceResult = document.getElementById('display-clearance-result');
-         const resultErrorMessageDiv = document.getElementById('result-error-message'); // Elemento para exibir erros no resultado
-
-
-        const comparisonGraphCanvas = document.getElementById('comparison-graph-canvas');
-
-        // Variáveis para controlar a animação de fundo com base no resultado
-        let currentConnectionDistance = 100; // Distância padrão
-        let currentLineOpacity = 0.2; // Opacidade padrão da linha
-        const baseUserParticleSpeed = 0.95; // Velocidade definida pelo usuário (de "950 movimento")
-        let currentParticleSpeed = baseUserParticleSpeed; // Velocidade atual das partículas
-
-        // Variável para armazenar o estado de risco do último cálculo de clearance
-        let lastClearanceRiskState = 'neutral'; // 'green', 'yellow', 'red', 'neutral'
+        // --- Malha Sináptica ---
+        class SynapticMesh {
+            constructor(canvasId, options = {}) {
+                this.canvas = document.getElementById(canvasId);
+                this.ctx = this.canvas.getContext('2d');
+                this.nodes = [];
+                this.options = {
+                    nodeCount: 150,
+                    connectDistance: 180,
+                    hueStart: 240, // Azul mais vibrante para tema escuro
+                    hueEnd: 300, // Púrpura mais vibrante para tema escuro
+                    lightHueStart: 160, // Cyan claro
+                    lightHueEnd: 200, // Azul-Ciano claro
+                    baseOpacity: 0.8,
+                    currentHueStart: 240, // Começa no tema escuro
+                    currentHueEnd: 300,   // Começa no tema escuro
+                    targetColor: null, // Cor do resultado ('red', 'yellow', 'green') ou null
+                    currentTheme: 'dark' // Tema atual da malha ('dark' ou 'light')
+                };
+                // Copia as opções iniciais para resetar depois
+                this.initialDarkHueStart = this.options.hueStart;
+                this.initialDarkHueEnd = this.options.hueEnd;
+                 this.initialLightHueStart = this.options.lightHueStart;
+                 this.initialLightHueEnd = this.options.lightHueEnd;
 
 
-         // Função para atualizar o estado visual da malha com base no risco do Clearance
-         function updateMeshVisualState(riskState) {
-             // Define cor, densidade e opacidade da malha com base no estado de risco
-             switch (riskState) {
-                 case 'green':
-                     baseCanvasColor = { r: Math.random() * 50, g: Math.random() * 100 + 155, b: Math.random() * 50, a: 0.3 }; // Tons Verdes
-                     currentConnectionDistance = 80; // Menos conexões
-                     currentLineOpacity = 0.15; // Linhas sutis
-                     break;
-                 case 'yellow':
-                     baseCanvasColor = { r: 255, g: Math.random() * 100 + 155, b: Math.random() * 50, a: 0.3 }; // Tons Amarelos/Laranja
-                     currentConnectionDistance = 120; // Conexões moderadas
-                     currentLineOpacity = 0.3; // Opacidade moderada
-                     break;
-                 case 'red':
-                     baseCanvasColor = { r: Math.random() * 50 + 200, g: Math.random() * 30, b: Math.random() * 30, a: 0.4 }; // Tons Vermelhos
-                     currentConnectionDistance = 150; // Mais conexões
-                     currentLineOpacity = 0.5; // Linhas visíveis
-                     break;
-                 case 'neutral':
-                 default:
-                     baseCanvasColor = { r: 50, g: 80, b: 120, a: 0.2 }; // Cor neutra inicial
-                     currentConnectionDistance = 100; // Padrão
-                     currentLineOpacity = 0.2; // Padrão
-                     break;
-             }
-              // A velocidade da partícula (currentParticleSpeed) não muda com o estado de risco neste código.
-              // Ela usa a baseUserParticleSpeed definida globalmente.
-         }
-
-
-        calcularBtn.addEventListener('click', () => {
-            // Limpar mensagens de erro anteriores
-            resultErrorMessageDiv.style.display = 'none';
-            resultErrorMessageDiv.textContent = '';
-             displayClearanceResult.classList.remove('result-color-red', 'result-color-yellow', 'result-color-green');
-
-
-            const sexo = sexoSelect.value;
-            const idade = parseInt(idadeInput.value);
-            const peso = parseFloat(pesoInput.value.replace(',', '.'));
-            const creatinina = parseFloat(creatininaInput.value.replace(',', '.'));
-
-             // Armazenar os dados inseridos para exibir na caixa de resultado
-            const enteredSexo = sexoSelect.options[sexoSelect.selectedIndex].text; // Pega o texto visível
-            const enteredIdade = idadeInput.value;
-            const enteredPeso = pesoInput.value;
-            const enteredCreatinina = creatininaInput.value;
-
-
-            if (isNaN(idade) || isNaN(peso) || isNaN(creatinina) || idade <= 0 || peso <= 0 || creatinina <= 0) {
-                // Mostrar erro na caixa de resultado
-                resultBoxArea.style.display = 'block'; // Garante que a caixa de resultado esteja visível para mostrar o erro
-                resultBoxArea.querySelector('.patient-data').style.display = 'none'; // Oculta dados se houver erro
-                resultBoxArea.querySelector('.calculation-result').style.display = 'none'; // Oculta resultado se houver erro
-                resultBoxArea.querySelector('.graph-area').style.display = 'none'; // Oculta gráfico se houver erro
-                resultBoxArea.querySelector('.references-area').style.display = 'none'; // Oculta referências se houver erro
-
-
-                resultErrorMessageDiv.style.display = 'block';
-                resultErrorMessageDiv.textContent = 'Por favor, insira valores numéricos válidos (maiores que zero, use vírgula para decimais) para Idade, Peso e Creatinina.';
-
-                 // Resetar estado de risco e cor da malha para neutro em caso de erro
-                 lastClearanceRiskState = 'neutral';
-                 updateMeshVisualState(lastClearanceRiskState);
-
-                 // Esconder formulário
-                 inputFormArea.style.display = 'none';
-
-
-                return;
+                this.init();
             }
 
-            // Se não houver erro, ocultar mensagem de erro e mostrar áreas relevantes
-             resultBoxArea.querySelector('.patient-data').style.display = 'block';
-             resultBoxArea.querySelector('.calculation-result').style.display = 'block';
-             resultBoxArea.querySelector('.graph-area').style.display = 'block';
-             resultBoxArea.querySelector('.references-area').style.display = 'block';
-             resultErrorMessageDiv.style.display = 'none'; // Oculta erro se o cálculo for bem-sucedido
-
-
-            // Realizar o cálculo
-            let clearance = ((140 - idade) * peso) / (creatinina * 72);
-            if (sexo === 'feminino') {
-                clearance *= 0.85;
-            }
-            const finalResult = Math.round(clearance * 100) / 100;
-
-             // Exibir os dados inseridos e o resultado na caixa de resultado
-             displaySexo.textContent = enteredSexo;
-             displayIdade.textContent = enteredIdade;
-             displayPeso.textContent = enteredPeso;
-             displayCreatinina.textContent = enteredCreatinina;
-             displayClearanceResult.textContent = finalResult.toString().replace('.', ',');
-
-
-            // Definir a cor do texto do resultado E ajustar o estado de risco para a malha
-            // Baseado nas faixas de TFG para contraste (<30, 30-59, >=60)
-            if (finalResult < 30) {
-                displayClearanceResult.classList.add('result-color-red'); // Vermelho no texto
-                lastClearanceRiskState = 'red';
-            } else if (finalResult >= 30 && finalResult < 60) {
-                displayClearanceResult.classList.add('result-color-yellow'); // Amarelo/Laranja no texto
-                 lastClearanceRiskState = 'yellow';
-            } else { // finalResult >= 60
-                displayClearanceResult.classList.add('result-color-green'); // Verde no texto
-                 lastClearanceRiskState = 'green';
+            init() {
+                this.resizeCanvas();
+                this.createNodes();
+                this.animate();
+                window.addEventListener('resize', () => {
+                    this.resizeCanvas();
+                    this.createNodes(); // Recria nós na nova dimensão
+                     // Garante que a malha redesenhada use a cor do tema atual ou do resultado
+                    this.setTheme(this.currentTheme); // Re-aplica o tema para atualizar as hues base
+                    if(this.options.targetColor) {
+                         this.setMeshColor(this.options.targetColor); // Re-aplica a cor do resultado se houver
+                    }
+                });
             }
 
-            // Atualiza o estado visual da malha com base no resultado do clearance
-             updateMeshVisualState(lastClearanceRiskState);
+            resizeCanvas() {
+                const dpr = window.devicePixelRatio || 1;
+                const width = window.innerWidth;
+                const height = window.innerHeight;
 
-             // Desenhar o gráfico de comparação
-             drawComparisonGraph(finalResult, comparisonGraphCanvas);
+                this.canvas.width = width * dpr;
+                this.canvas.height = height * dpr;
+                this.canvas.style.width = `${width}px`;
+                this.canvas.style.height = `${height}px`;
 
+                this.ctx.scale(dpr, dpr);
+            }
 
-            // Esconder a área do formulário e mostrar a caixa de resultado
-            inputFormArea.style.display = 'none';
-            resultBoxArea.style.display = 'block';
-        });
+            createNodes() {
+                 // Recria nós com base nas dimensões atuais da janela
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+                const speedMultiplier = 0.6; // Velocidade da malha
 
-        // Event Listener para o botão "Próximo Cálculo"
-        nextCalculationBtn.addEventListener('click', () => {
-            // Limpar campos do formulário (opcional)
-            // sexoSelect.value = 'masculino'; // Resetar seleção se desejar
-            idadeInput.value = '';
-            pesoInput.value = '';
-            creatininaInput.value = '';
-
-            // Limpar exibição de resultado e erro na caixa de resultado
-            displayClearanceResult.textContent = '';
-             displayClearanceResult.classList.remove('result-color-red', 'result-color-yellow', 'result-color-green');
-            resultErrorMessageDiv.style.display = 'none';
-            resultErrorMessageDiv.textContent = '';
-             // Limpar dados do paciente exibidos
-             displaySexo.textContent = '';
-             displayIdade.textContent = '';
-             displayPeso.textContent = '';
-             displayCreatinina.textContent = '';
-
-            // Voltar estado de risco e cor da malha para neutro
-             lastClearanceRiskState = 'neutral';
-             updateMeshVisualState(lastClearanceRiskState);
+                this.nodes = Array.from({ length: this.options.nodeCount }, () => ({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    // Velocidade definida aqui
+                    vx: (Math.random() - 0.5) * speedMultiplier,
+                    vy: (Math.random() - 0.5) * speedMultiplier,
+                    r: Math.random() * 2 + 1
+                }));
+            }
 
 
-            // Esconder a caixa de resultado e mostrar a área do formulário
-            resultBoxArea.style.display = 'none';
-            inputFormArea.style.display = 'block';
-        });
+            updateNodes() {
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+                this.nodes.forEach(node => {
+                    node.x += node.vx;
+                    node.y += node.vy;
 
+                    // Rebote nas bordas com amortecimento
+                    if (node.x < 0 || node.x > width) {
+                        node.vx *= -0.9;
+                        node.x = Math.max(0, Math.min(node.x, width));
+                    }
+                    if (node.y < 0 || node.y > height) {
+                        node.vy *= -0.9;
+                        node.y = Math.max(0, Math.min(node.y, height));
+                    }
+                });
+            }
 
-         // Função para desenhar o gráfico de comparação (Aprimorada com Referências TFG)
-         function drawComparisonGraph(result, canvas) {
-             const ctx = canvas.getContext('2d');
-             // Certificar-se de que o canvas tem um tamanho ao desenhar
-             const width = canvas.offsetWidth > 0 ? canvas.offsetWidth : 400; // Fallback para 400 se offsetWidth for 0
-             const height = canvas.offsetHeight > 0 ? canvas.offsetHeight : 50; // Fallback para 50
+            // Modifica para usar as hues atuais ou uma cor sólida baseada no targetColor
+            getNodeColor(x) {
+                if (this.options.targetColor) {
+                    // Usa uma cor sólida baseada no resultado (mesma para dark/light)
+                    switch(this.options.targetColor) {
+                        case 'red': return 'hsla(0, 80%, 65%, '; // Vermelho
+                        case 'yellow': return 'hsla(50, 80%, 65%, '; // Amarelo
+                        case 'green': return 'hsla(120, 80%, 65%, '; // Verde
+                        default: return 'hsla(240, 80%, 65%, '; // Azul padrão se erro
+                    }
+                } else {
+                    // Usa o gradiente baseado na posição X e nas hues atuais do TEMA
+                    const hueStart = this.options.currentHueStart;
+                    const hueEnd = this.options.currentHueEnd;
 
-             const dpi = window.devicePixelRatio;
-             canvas.width = width * dpi;
-             canvas.height = height * dpi;
-             ctx.scale(dpi, dpi);
+                    const hue = hueStart + (x / window.innerWidth) * (hueEnd - hueStart);
+                    return `hsla(${hue}, 80%, 65%, `; // Usa mesma saturação/luminosidade, varia hue e opacidade
+                }
+            }
 
-             ctx.clearRect(0, 0, width, height);
+             // Método para definir a cor alvo da malha (baseado no resultado)
+            setMeshColor(color) { // color pode ser 'red', 'yellow', 'green' ou null
+                this.options.targetColor = color;
+                 // Se a cor do resultado for null, garantimos que as hues voltem para as do TEMA atual
+                if (!color) {
+                    this.setTheme(this.currentTheme); // Força a atualização das hues baseadas no tema atual
+                }
+            }
 
-             // Definir as faixas de referência e suas cores (baseado em <30, 30-59, >=60 para contraste)
-             const ranges = [
-                 { limit: 30, color: '#ff4136' }, /* Vermelho vibrante para < 30 */
-                 { limit: 60, color: '#ffdc00' }, /* Amarelo vibrante para 30-59 */
-                 { limit: Infinity, color: '#39FF14' } /* Verde Fluorescente para >= 60 */
-             ];
-
-             const maxClearance = 150;
-             const scaleFactor = width / maxClearance;
-
-             let currentX = 0;
-             for (let i = 0; i < ranges.length; i++) {
-                 const range = ranges[i];
-                 const startLimit = (i > 0 ? ranges[i-1].limit : 0);
-                 const endLimit = range.limit;
-
-                 const rangeWidth = (endLimit - startLimit) * scaleFactor;
-
-                 const displayWidth = Math.max(0, Math.min(rangeWidth, width - currentX));
-
-
-                 if (displayWidth > 0) {
-                     const gradient = ctx.createLinearGradient(currentX, 0, currentX + displayWidth, 0);
-                     gradient.addColorStop(0, range.color + '80');
-                     gradient.addColorStop(0.5, range.color + 'ff');
-                     gradient.addColorStop(1, range.color + '80');
-
-                     ctx.fillStyle = gradient;
-                     ctx.fillRect(currentX, 0, displayWidth, height);
+             // Método para definir o tema da malha
+            setTheme(theme) { // theme pode ser 'dark' ou 'light'
+                 this.currentTheme = theme;
+                 // Atualiza as hues base para o tema SOMENTE se não estiver mostrando uma cor de resultado
+                 if (this.options.targetColor === null) {
+                     if (theme === 'light') {
+                         this.options.currentHueStart = this.initialLightHueStart;
+                         this.options.currentHueEnd = this.initialLightHueEnd;
+                     } else { // theme === 'dark'
+                         this.options.currentHueStart = this.initialDarkHueStart;
+                         this.options.currentHueEnd = this.initialDarkHueEnd;
+                     }
                  }
-
-                 currentX += displayWidth;
+                 // A animação continuará usando currentHueStart/End ou targetColor
              }
 
-             const resultPosition = Math.min(Math.max(0, result), maxClearance) * scaleFactor;
-             const markerWidth = 4;
 
-             ctx.shadowBlur = 10;
-             ctx.shadowColor = '#fff';
+            drawConnections() {
+                const { connectDistance } = this.options;
+                const width = window.innerWidth; // Obtém a largura atual dentro da animação
+                 const ctx = this.ctx; // Use this.ctx
 
-             ctx.fillStyle = '#fff';
-             ctx.fillRect(resultPosition - markerWidth / 2, 0, markerWidth, height);
+                for (let i = 0; i < this.nodes.length; i++) {
+                    for (let j = i + 1; j < this.nodes.length; j++) {
+                        const dx = this.nodes[i].x - this.nodes[j].x;
+                        const dy = this.nodes[i].y - this.nodes[j].y;
+                        const distSq = dx * dx + dy * dy;
 
-             ctx.shadowBlur = 0;
-             ctx.shadowColor = 'transparent';
+                        if (distSq < connectDistance * connectDistance) {
+                            const dist = Math.sqrt(distSq);
+                            const opacity = (1 - dist / connectDistance) * 0.4; // Opacidade da linha
+                            const midX = (this.nodes[i].x + this.nodes[j].x) / 2; // Posição X média para o gradiente
 
-             ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-             ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.moveTo(this.nodes[i].x, this.nodes[i].y);
+                            ctx.lineTo(this.nodes[j].x, this.nodes[j].y);
 
-             // Linha em 30
-             ctx.beginPath();
-             ctx.moveTo(30 * scaleFactor, 0);
-             ctx.lineTo(30 * scaleFactor, height);
-             ctx.stroke();
-
-             // Linha em 60
-             ctx.beginPath();
-             ctx.moveTo(60 * scaleFactor, 0);
-             ctx.lineTo(60 * scaleFactor, height);
-             ctx.stroke();
-         }
-
-
-        // --- Animação da Malha Neural no Canvas ---
-
-        const backgroundCanvas = document.getElementById('background-canvas');
-        const backgroundCtx = backgroundCanvas.getContext('2d');
-        let particles = [];
-
-        const numberOfParticles = 200;
-        const particleSize = 1.0;
-        // Velocidade usada para inicializar e normalizar o movimento das partículas
-        // const particleSpeed = 0.95; // Removido, usa currentParticleSpeed global
-
-        // currentConnectionDistance e currentLineOpacity são variáveis globais definidas na lógica de cálculo
-        // const connectionDistance = 100;
-        // const lineOpacity = 0.2;
-
-        // Espessura da linha para torná-la visível, conforme solicitado
-        const lineWidth = 1.5;
-
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * backgroundCanvas.width;
-                this.y = Math.random() * backgroundCanvas.height;
-
-                const angle = Math.random() * 2 * Math.PI;
-                // Usa a variável global currentParticleSpeed para a velocidade inicial
-                this.vx = Math.cos(angle) * currentParticleSpeed;
-                this.vy = Math.sin(angle) * currentParticleSpeed;
-
-                 this.opacity = Math.random() * 0.5 + 0.1;
-            }
-
-            move() {
-                this.x += this.vx;
-                this.y += this.vy;
-
-                // Inverte a direção ao atingir as bordas
-                if (this.x <= 0 || this.x >= backgroundCanvas.width) this.vx *= -1;
-                if (this.y <= 0 || this.y >= backgroundCanvas.height) this.vy *= -1;
-            }
-        }
-
-        function createParticles() {
-            particles = [];
-            for (let i = 0; i < numberOfParticles; i++) {
-                particles.push(new Particle());
-            }
-            // Recria partículas, seus vetores de velocidade inicial usarão a velocidade currentParticleSpeed atual.
-            // A velocidade é então ajustada levemente em tempo real no animate, mantendo a magnitude base.
-        }
-
-        function createBackgroundGradient() {
-            const gradient = backgroundCtx.createLinearGradient(0, 0, backgroundCanvas.width, backgroundCanvas.height);
-
-            /* Cores do gradiente de fundo - Usam baseCanvasColor (definida na lógica de cálculo) */
-            /* Ajustadas para usar um alpha menor no baseCanvasColor.a para o gradiente em si ser mais sutil,
-               enquanto currentLineOpacity controla a visibilidade das linhas. */
-            const gradientAlpha = baseCanvasColor.a * 0.8; // Ex: se baseCanvasColor.a é 0.4, o gradiente alpha máximo é 0.32
-
-            gradient.addColorStop(0, `rgba(${Math.floor(baseCanvasColor.r * 0.1)}, ${Math.floor(baseCanvasColor.g * 0.1)}, ${Math.floor(baseCanvasColor.b * 0.1)}, ${gradientAlpha})`);
-            gradient.addColorStop(0.5, `rgba(${Math.floor(baseCanvasColor.r * 0.2)}, ${Math.floor(baseCanvasColor.g * 0.2)}, ${Math.floor(baseCanvasColor.b * 0.2)}, ${gradientAlpha * 0.5})`); /* Centro mais transparente */
-            gradient.addColorStop(1, `rgba(${Math.floor(baseCanvasColor.r * 0.1)}, ${Math.floor(baseCanvasColor.g * 0.1)}, ${Math.floor(baseCanvasColor.b * 0.1)}, ${gradientAlpha})`);
-
-
-            return gradient;
-        }
-
-        function connectParticles() {
-             // Cor das linhas: Tons brilhantes baseados na cor base
-             let lineR = Math.min(baseCanvasColor.r + 80, 255);
-             let lineG = Math.min(baseCanvasColor.g + 80, 255);
-             let lineB = Math.min(baseCanvasColor.b + 80, 255);
-
-            for (let i = 0; i < particles.length; i++) {
-                const p1 = particles[i];
-
-                for (let j = i + 1; j < particles.length; j++) {
-                    const p2 = particles[j];
-                    const dx = p1.x - p2.x;
-                    const dy = p1.y - p2.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-
-                    // Usa a variável global currentConnectionDistance (definida na lógica de cálculo)
-                    if (distance < currentConnectionDistance) {
-                        // Usa a variável global currentLineOpacity (definida na lógica de cálculo)
-                        const currentFrameLineOpacity = (1 - distance / currentConnectionDistance) * currentLineOpacity;
-
-                        backgroundCtx.beginPath();
-                        backgroundCtx.moveTo(p1.x, p1.y);
-                        backgroundCtx.lineTo(p2.x, p2.y);
-
-                        backgroundCtx.strokeStyle = `rgba(${lineR}, ${lineG}, ${lineB}, ${currentFrameLineOpacity})`;
-                        backgroundCtx.lineWidth = lineWidth; // Usa a espessura da linha ajustada (1.5)
-                        backgroundCtx.stroke();
+                            // Usa a cor do nó na posição X média (ou a cor alvo se definida)
+                            const colorBase = this.getNodeColor(midX); // Obtém a string base 'hsla(..., 80%, 65%, '
+                            ctx.strokeStyle = colorBase + opacity + ')';
+                            ctx.lineWidth = 0.7;
+                            ctx.stroke();
+                        }
                     }
                 }
             }
+
+            drawNodes() {
+                const width = window.innerWidth; // Obtém a largura atual dentro da animação
+                const ctx = this.ctx; // Use this.ctx
+
+                this.nodes.forEach(node => {
+                     const colorBase = this.getNodeColor(node.x); // Obtém a string base
+
+                    ctx.beginPath();
+                    ctx.arc(node.x, node.y, node.r, 0, Math.PI * 2);
+                    ctx.fillStyle = colorBase + this.options.baseOpacity + ')'; // Adiciona a opacidade base
+
+                    // Somente ativa sombras se não for mobile (melhora performance)
+                     if (!this.isMobile()) {
+                         // Ajusta a cor da sombra para corresponder à cor base do nó
+                         ctx.shadowColor = colorBase + '0.7)'; // Use ctx aqui
+                         ctx.shadowBlur = 8; // Use ctx aqui
+                     }
+
+                    ctx.fill(); // Use ctx
+                    ctx.shadowBlur = 0; // Desativa a sombra (use ctx)
+                });
+            }
+
+
+            isMobile() {
+                return window.innerWidth < 768; // Definição de mobile simples
+            }
+
+            clearCanvas() {
+                 // Limpa o canvas completamente antes de desenhar
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                // O fundo é definido pelo CSS do body
+            }
+
+            animate() {
+                this.clearCanvas();
+                this.updateNodes();
+                this.drawConnections();
+                this.drawNodes();
+                requestAnimationFrame(() => this.animate()); // Loop de animação
+            }
         }
 
-        function animate() {
-            // 1. Limpar o canvas completamente com uma cor opaca (preto puro) para evitar rastro
-            backgroundCtx.fillStyle = '#000';
-            backgroundCtx.fillRect(0, 0, backgroundCanvas.width, backgroundCanvas.height);
-
-            // 2. Desenhar o gradiente de fundo (que pode ser semi-transparente)
-            backgroundCtx.fillStyle = createBackgroundGradient();
-            backgroundCtx.fillRect(0, 0, backgroundCanvas.width, backgroundCanvas.height);
-
-            // 3. Mover e desenhar partículas e linhas
-            let pointR = Math.min(baseCanvasColor.r + 100, 255);
-            let pointG = Math.min(baseCanvasColor.g + 100, 255);
-            let pointB = Math.min(baseCanvasColor.b + 100, 255);
-
-            particles.forEach(p => {
-                 // Normaliza o vetor de velocidade e o multiplica pela velocidade global atual
-                 // Isso garante que a velocidade de todas as partículas use o mesmo valor currentParticleSpeed
-                 const speedMagnitude = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-                 if (speedMagnitude > 0) { // Evita divisão por zero
-                     p.vx = (p.vx / speedMagnitude) * currentParticleSpeed;
-                     p.vy = (p.vy / speedMagnitude) * currentParticleSpeed;
-                 } else {
-                      // Caso a velocidade seja zero (improvável com Math.random, mas seguro), atribui uma nova velocidade inicial
-                      const angle = Math.random() * 2 * Math.PI;
-                      p.vx = Math.cos(angle) * currentParticleSpeed;
-                      p.vy = Math.sin(angle) * currentParticleSpeed;
-                 }
-
-
-                p.move(); // Move a partícula usando os vetores vx/vy atualizados
-
-                backgroundCtx.fillStyle = `rgba(${pointR}, ${pointG}, ${pointB}, ${p.opacity})`;
-
-                backgroundCtx.beginPath();
-                backgroundCtx.arc(p.x, p.y, particleSize, 0, Math.PI * 2);
-                backgroundCtx.fill();
+        // --- Lógica de Cálculo, Atualização da Interface e Temas ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicializa a malha sináptica
+            const mesh = new SynapticMesh('synapseCanvas', {
+                 nodeCount: 150,
+                 connectDistance: 180,
+                 hueStart: 240, // Azul escuro padrão
+                 hueEnd: 300, // Púrpura escuro padrão
+                 lightHueStart: 160, // Cyan claro
+                 lightHueEnd: 200, // Azul-Ciano claro
+                 baseOpacity: 0.8
             });
 
-            connectParticles(); // Desenha as conexões usando currentConnectionDistance e currentLineOpacity
+            // Atualiza o ano no rodapé
+            document.getElementById('year').textContent = new Date().getFullYear();
 
-            requestAnimationFrame(animate);
-        }
+            // Variáveis para controle da interface
+            const inputFormArea = document.getElementById('input-form-area');
+            const resultBoxArea = document.getElementById('result-box-area');
+            const calcularBtn = document.getElementById('calcular-btn');
+            const nextCalculationBtn = document.getElementById('next-calculation-btn');
+             const themeToggleCheckbox = document.getElementById('theme-toggle'); // Checkbox do toggle de tema
 
 
-        // --- Inicialização e Redimensionamento ---
+            const sexoSelect = document.getElementById('sexo');
+            const idadeInput = document.getElementById('idade');
+            const pesoInput = document.getElementById('peso');
+            const creatininaInput = document.getElementById('creatinina');
 
-        window.addEventListener('resize', () => {
-            backgroundCanvas.width = window.innerWidth;
-            backgroundCanvas.height = window.innerHeight;
-            // Recria partículas no redimensionamento, mantendo a velocidade base
-            createParticles();
-             // Redesenha o gráfico no novo tamanho se ele estiver visível
-            if (resultBoxArea.style.display !== 'none') {
-                 const currentResultText = displayClearanceResult.textContent;
-                 if (currentResultText) {
-                      const currentResult = parseFloat(currentResultText.replace(',', '.'));
-                      if (!isNaN(currentResult)) {
-                           drawComparisonGraph(currentResult, comparisonGraphCanvas);
-                      }
-                 }
+            const displaySexo = document.getElementById('display-sexo');
+            const displayIdade = document.getElementById('display-idade');
+            const displayPeso = document.getElementById('display-peso');
+            const displayCreatinina = document.getElementById('display-creatinina');
+            const displayClearanceResult = document.getElementById('display-clearance-result');
+            const resultErrorMessageDiv = document.getElementById('result-error-message');
+            const comparisonGraphCanvas = document.getElementById('comparison-graph-canvas');
+
+
+            // --- Lógica do Tema ---
+
+            // Função para aplicar o tema (salva em localStorage e atualiza a UI e a malha)
+            function applyTheme(theme) {
+                const isLight = theme === 'light';
+                document.body.classList.toggle('light-mode', isLight); // Adiciona/Remove a classe 'light-mode' no body
+                localStorage.setItem('theme', theme); // Salva a preferência do tema
+
+                // Sincroniza o estado visual do checkbox com o tema aplicado
+                themeToggleCheckbox.checked = isLight; // Marcado = Tema Claro (Ligado)
+
+                // Informa a malha sináptica sobre a mudança de tema
+                mesh.setTheme(theme);
+            }
+
+            // Verifica o tema salvo no localStorage ao carregar a página ou usa o padrão (dark)
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            applyTheme(savedTheme); // Aplica o tema inicial
+
+            // Adiciona o evento de mudança (change) ao checkbox do toggle de tema
+            themeToggleCheckbox.addEventListener('change', () => {
+                // Determina o novo tema baseado no estado do checkbox
+                const newTheme = themeToggleCheckbox.checked ? 'light' : 'dark'; // Marcado = 'light', Desmarcado = 'dark'
+                // Aplica o novo tema
+                applyTheme(newTheme);
+            });
+
+
+            // --- Lógica de Cálculo ---
+
+            calcularBtn.addEventListener('click', () => {
+                // Limpar mensagens de erro anteriores e classes de cor do resultado
+                resultErrorMessageDiv.style.display = 'none';
+                resultErrorMessageDiv.textContent = '';
+                displayClearanceResult.classList.remove('result-color-red', 'result-color-yellow', 'result-color-green');
+
+                const sexo = sexoSelect.value;
+                // Usa parseFloat para suportar decimais no input 'number' em alguns navegadores
+                const idade = parseFloat(idadeInput.value);
+                // Substitui vírgula por ponto para garantir que parseFloat funcione corretamente
+                const peso = parseFloat(pesoInput.value.replace(',', '.'));
+                const creatinina = parseFloat(creatininaInput.value.replace(',', '.'));
+
+                // Armazenar os dados inseridos para exibir na caixa de resultado
+                const enteredSexo = sexoSelect.options[sexoSelect.selectedIndex].text;
+                const enteredIdade = idadeInput.value;
+                const enteredPeso = pesoInput.value;
+                const enteredCreatinina = creatininaInput.value;
+
+                if (isNaN(idade) || isNaN(peso) || isNaN(creatinina) || idade <= 0 || peso <= 0 || creatinina <= 0) {
+                    // Mostrar erro
+                    resultBoxArea.style.display = 'block';
+                    resultBoxArea.querySelector('.patient-data').style.display = 'none';
+                    resultBoxArea.querySelector('.calculation-result').style.display = 'none';
+                    resultBoxArea.querySelector('.graph-area').style.display = 'none';
+                    resultBoxArea.querySelector('.references-area').style.display = 'none';
+
+                    resultErrorMessageDiv.style.display = 'block';
+                    resultErrorMessageDiv.textContent = 'Por favor, insira valores numéricos válidos (maiores que zero, use ponto ou vírgula para decimais) para Idade, Peso e Creatinina.';
+
+                    // Esconder formulário
+                    inputFormArea.style.display = 'none';
+
+                    // Resetar a cor da malha para o tema atual em caso de erro
+                    mesh.setMeshColor(null); // setMeshColor(null) usa o tema atual
+                    return;
+                }
+
+                // Se não houver erro, mostrar áreas relevantes
+                resultBoxArea.querySelector('.patient-data').style.display = 'block';
+                resultBoxArea.querySelector('.calculation-result').style.display = 'block';
+                resultBoxArea.querySelector('.graph-area').style.display = 'block';
+                resultBoxArea.querySelector('.references-area').style.display = 'block';
+                resultErrorMessageDiv.style.display = 'none'; // Garante que a mensagem de erro anterior seja escondida
+
+                // Realizar o cálculo (Cockcroft & Gault)
+                let clearance = ((140 - idade) * peso) / (creatinina * 72);
+                if (sexo === 'feminino') {
+                    clearance *= 0.85;
+                }
+                const finalResult = Math.round(clearance * 100) / 100; // Arredonda para 2 casas decimais
+
+                // Exibir resultados
+                displaySexo.textContent = enteredSexo;
+                displayIdade.textContent = enteredIdade;
+                displayPeso.textContent = enteredPeso;
+                displayCreatinina.textContent = enteredCreatinina;
+                 // Exibe o resultado com vírgula se necessário, mas arredondado
+                displayClearanceResult.textContent = finalResult.toFixed(2).replace('.', ',');
+
+
+                // Definir cor do texto do resultado E a cor da malha sináptica
+                let meshColor = null; // null significa usar a cor do tema
+                if (finalResult < 30) {
+                    displayClearanceResult.classList.add('result-color-red');
+                    meshColor = 'red';
+                } else if (finalResult >= 30 && finalResult < 60) {
+                    displayClearanceResult.classList.add('result-color-yellow');
+                     meshColor = 'yellow';
+                } else { // >= 60
+                    displayClearanceResult.classList.add('result-color-green');
+                     meshColor = 'green';
+                }
+
+                // Atualiza a cor da malha sináptica para a cor do resultado
+                mesh.setMeshColor(meshColor);
+
+
+                // Desenhar o gráfico de comparação
+                drawComparisonGraph(finalResult, comparisonGraphCanvas);
+
+                // Esconder formulário e mostrar resultados
+                inputFormArea.style.display = 'none';
+                resultBoxArea.style.display = 'block';
+            });
+
+            // Evento para novo cálculo
+            nextCalculationBtn.addEventListener('click', () => {
+                // Limpar campos do formulário
+                idadeInput.value = '';
+                pesoInput.value = '';
+                creatininaInput.value = '';
+                sexoSelect.value = 'masculino'; // Resetar seleção de sexo
+
+                // Limpar exibição de resultado e classes de cor
+                displayClearanceResult.textContent = '';
+                displayClearanceResult.classList.remove('result-color-red', 'result-color-yellow', 'result-color-green');
+                resultErrorMessageDiv.style.display = 'none';
+                resultErrorMessageDiv.textContent = '';
+                displaySexo.textContent = '';
+                displayIdade.textContent = '';
+                displayPeso.textContent = '';
+                displayCreatinina.textContent = '';
+
+                // Limpar o gráfico (opcional, pode simplesmente escondê-lo)
+                const graphCtx = comparisonGraphCanvas.getContext('2d');
+                 graphCtx.clearRect(0, 0, comparisonGraphCanvas.width, comparisonGraphCanvas.height);
+
+
+                // Resetar a cor da malha sináptica para o estado inicial do TEMA ATUAL
+                mesh.setMeshColor(null);
+
+
+                // Esconder resultados e mostrar formulário
+                resultBoxArea.style.display = 'none';
+                inputFormArea.style.display = 'block';
+            });
+
+            // Função para desenhar o gráfico de comparação (Mantida do Código 1)
+            function drawComparisonGraph(result, canvas) {
+                const ctx = canvas.getContext('2d');
+                // Use clientWidth/clientHeight para obter o tamanho renderizado
+                const width = canvas.clientWidth > 0 ? canvas.clientWidth : 400;
+                const height = canvas.clientHeight > 0 ? canvas.clientHeight : 50;
+
+                const dpi = window.devicePixelRatio;
+                // Ajusta o tamanho do canvas para a resolução do dispositivo
+                canvas.width = width * dpi;
+                canvas.height = height * dpi;
+                // Escala o contexto para que o desenho em "pixels CSS" corresponda aos "pixels físicos"
+                ctx.scale(dpi, dpi);
+
+                ctx.clearRect(0, 0, width, height); // Limpa o canvas
+
+                // Definir as faixas de referência (KDIGO-like)
+                const ranges = [
+                    { limit: 30, color: '#ff4136' }, // Red (G4-G5)
+                    { limit: 60, color: '#ffdc00' }, // Yellow (G3a-G3b)
+                    { limit: Infinity, color: '#39FF14' } // Green (G1-G2, normal)
+                ];
+
+                const maxClearance = 150; // Valor máximo para a escala do gráfico
+                const scaleFactor = width / maxClearance; // Fator para mapear valores de clearance para pixels
+
+                let currentX = 0;
+                for (let i = 0; i < ranges.length; i++) {
+                    const range = ranges[i];
+                    const startLimit = (i > 0 ? ranges[i-1].limit : 0);
+                    const endLimit = range.limit;
+
+                    // Calcula a largura da faixa em pixels
+                    const rangeWidth = (endLimit - startLimit) * scaleFactor;
+                     // Garante que a largura não ultrapasse o canvas
+                    const displayWidth = Math.max(0, Math.min(rangeWidth, width - currentX));
+
+
+                    if (displayWidth > 0) {
+                         // Cria um gradiente para a faixa para um efeito visual suave
+                        const gradient = ctx.createLinearGradient(currentX, 0, currentX + displayWidth, 0);
+                        gradient.addColorStop(0, range.color + '80'); // Começa semi-transparente
+                        gradient.addColorStop(0.5, range.color + 'ff'); // Centro opaco
+                        gradient.addColorStop(1, range.color + '80'); // Termina semi-transparente
+
+                        ctx.fillStyle = gradient;
+                        ctx.fillRect(currentX, 0, displayWidth, height);
+                    }
+
+                    currentX += displayWidth; // Move para a próxima posição inicial
+                }
+
+                // Desenha o marcador do resultado atual
+                // Limita a posição dentro da escala do gráfico (0 a maxClearance)
+                const resultPosition = Math.min(Math.max(0, result), maxClearance) * scaleFactor;
+                const markerWidth = 4; // Largura do marcador branco
+
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = '#fff'; // Sombra branca para o marcador
+                ctx.fillStyle = '#fff'; // Cor branca para o marcador
+                ctx.fillRect(resultPosition - markerWidth / 2, 0, markerWidth, height); // Desenha o marcador centralizado
+                ctx.shadowBlur = 0; // Desativa a sombra
+
+
+                // Desenha linhas de referência (nos limites KDIGO)
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)'; // Linhas brancas semi-transparentes
+                ctx.lineWidth = 1;
+
+                // Linha em 30
+                ctx.beginPath();
+                ctx.moveTo(30 * scaleFactor, 0);
+                ctx.lineTo(30 * scaleFactor, height);
+                ctx.stroke();
+
+                // Linha em 60
+                ctx.beginPath();
+                ctx.moveTo(60 * scaleFactor, 0);
+                ctx.lineTo(60 * scaleFactor, height);
+                ctx.stroke();
+
+                // Nota: Não é necessário uma linha em 150, pois é o limite do gráfico.
             }
         });
-
-
-        // --- Inicialização Geral ---
-
-        backgroundCanvas.width = window.innerWidth;
-        backgroundCanvas.height = window.innerHeight;
-
-        // Define a velocidade inicial das partículas globalmente (usa a baseUserParticleSpeed)
-        currentParticleSpeed = baseUserParticleSpeed;
-         // O estado inicial da malha será "neutral" por padrão.
-         updateMeshVisualState(lastClearanceRiskState); // Garante que o estado inicial da malha seja neutro
-
-
-        createParticles(); // Inicializa as partículas com a velocidade e estado inicial da malha
-        animate(); // Inicia o loop de animação
-
     </script>
-
 </body>
 </html>
